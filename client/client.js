@@ -8,30 +8,28 @@ Template.map.rendered = function() {
 
   var map = L.map('map', {
     doubleClickZoom: false
-  }).setView([49.25044, -123.137], 13);
+  }).setView([-34.6, -58.5], 11);
 
   L.tileLayer.provider('Thunderforest.Outdoors').addTo(map);
 
-  map.on('dblclick', function(event) {
-    Markers.insert({latlng: event.latlng});
+    map.on('dblclick', function(event) {
+        console.log (event.latlng);
+//    Markers.insert({latlng: event.latlng});
   });
 
   var query = Markers.find();
   query.observe({
-    added: function(document) {
-      var marker = L.marker(document.latlng).addTo(map)
-        .on('click', function(event) {
-          map.removeLayer(marker);
-          Markers.remove({_id: document._id});
-        });
+      added: function(document) {
+          console.log ('added', document);
+      var marker = L.marker(document).addTo(map);
     },
     removed: function(oldDocument) {
       layers = map._layers;
       var key, val;
       for (key in layers) {
         val = layers[key];
-        if (val._latlng) {
-          if (val._latlng.lat === oldDocument.latlng.lat && val._latlng.lng === oldDocument.latlng.lng) {
+        if (val) {
+          if (val.lat === oldDocument.lat && val.lng === oldDocument.lng) {
             map.removeLayer(val);
           }
         }
