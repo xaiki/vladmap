@@ -2,6 +2,7 @@
 var Markers = new Meteor.Collection('markers');
 
 var throttledScale = _.throttle(renderScale, 1000, {leading: false});
+var throttledTotal = _.throttle(renderTotal, 1000, {leading: false});
 var map;
 var markersGroup = L.layerGroup();
 
@@ -58,6 +59,10 @@ function renderScale (from, to) {
         $("#range").Link('upper').to('-inline-<div class="tooltip"></div>', setDate);
 }
 
+function renderTotal (total) {
+        $('.totalCount').html(totalCount);
+}
+
 function renderMap(range) {
         $('.humanRange').html(scaleRange());
         markersGroup.clearLayers();
@@ -82,8 +87,9 @@ function renderMap(range) {
                                 max = document.date;
                                 modified = true;
                         }
+
                         totalCount += Number(document.amplitude);
-                        $('.totalCount').html(totalCount);
+                        throttledTotal(totalCount);
 
                         var amplitude = 2 + document.amplitude/20;
                         var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
