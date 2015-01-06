@@ -91,7 +91,7 @@ function renderMap(range) {
                         totalCount += Number(document.amplitude);
                         throttledTotal(totalCount);
 
-                        var amplitude = 2 + document.amplitude/20;
+                        var amplitude = 2 + document.amplitude/10;
                         var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
                         var marker = L.marker(document.latlng ,
                                               {icon: icon,
