@@ -36,7 +36,7 @@ function renderScale (from, to) {
 	        format: wNumb({
 		        decimals: 0
 	        }),
-                connect: true
+                connect: true,
         });
 
         // Optional addon: creating Pips (Percentage In Point);
@@ -82,8 +82,13 @@ function renderMap(range) {
                                 max = document.date;
                                 modified = true;
                         }
+                        var amplitude = 2 + document.amplitude/20;
+                        var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
                         var marker = L.marker(document.latlng ,
-                                              {icon: icons[document.corp.toLowerCase()]}).addTo(markersGroup);
+                                              {icon: icon,
+                                               title: document.amplitude + ' usuarios',
+                                               opacity: 0.8
+                                              }).addTo(markersGroup);
                         if (modified) {
                                 throttledScale(min, max);
                         }

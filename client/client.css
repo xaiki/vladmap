@@ -1,16 +1,22 @@
-.map-icon-edenor, .map-icon-edesur {
-    width: 1px!important;
-    height: 1px!important;
-    border-radius: 2px!important;
-    border: solid 2px;
+.leaflet-marker-icon {
+/*    width: 1px!important;
+    height: 1px!important;*/
+    border-radius: 30px!important;
+    border: solid 1px;
 }
 
+.leaflet-marker-icon:hover {
+    border: solid 2px;
+    z-index: 90000!important;
+}
 .map-icon-edenor {
-    border-color: #ee8800;
+    border-color: #ff8800;
+    background-color: #ee8800;
 }
 
 .map-icon-edesur {
-    border-color: #0088ee;
+    border-color: #0088ff;
+    background-color: #0088ee;
 }
 
 .tooltip {
