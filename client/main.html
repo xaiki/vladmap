@@ -1,18 +1,35 @@
 <head>
+  <meta charset="UTF-8">
   <title>Cortes de Luz</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 </head>
 
 <body>
+  {{> main}}
+</body>
+
+<template name="main">
   <div id="container">
+    <div id="account-actions">
+      <a href="#" data-title="Home"><i class="fa fa-home"></i></a>
+      <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a>
+    </div>
+
     <h1 class="title">Cortes de luz</h1>
+    <div class="human-range">
+      <div class="humanRange"></div>
+    </div>
+    <div class="usuarios-sin-luz">
+      <span class="totalCount"></span>
+      Usuarios sin luz
+    </div>
     {{> map}}
     {{> range}}
     <div class="notice">
-
+      © xaiki -- AGPLv3
     </div>
   </div>
-</body>
+</template>
 
 <template name="map">
   <div id="map" class="map"></div>

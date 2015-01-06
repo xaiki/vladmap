@@ -1,13 +1,15 @@
 // create marker collection
 var Markers = new Meteor.Collection('markers');
-window.m = Markers;
-var icons = {
-    edenor: L.divIcon({className: 'map-icon-edenor'}),
-    edesur: L.divIcon({className: 'map-icon-edesur'})
-};
+
+var throttledScale = _.throttle(renderScale, 1000, {leading: false});
+var map;
+var markersGroup = L.layerGroup();
+
+var min, max;
+var totalCount = 0;
+
 
 moment.locale('es');
-
 Meteor.subscribe('markers');
 
 function timestamp(str) {
@@ -19,9 +21,16 @@ function formatDate(value) {
 }
 
 function setDate(value) {
-        console.log ('setDate', value, formatDate(value));
         $(this).html(formatDate(value));
         renderMap($('#range').val());
+}
+
+function scaleRange() {
+        var range = $('#range').val();
+        if (!range)
+                return '';
+        var duration = range[1] - range[0];
+        return moment.duration(duration, 'seconds').humanize();
 }
 
 function renderScale (from, to) {
@@ -52,14 +61,10 @@ function renderScale (from, to) {
         console.log (range);
 }
 
-var throttledScale = _.throttle(renderScale, 1000, {leading: false});
-var map;
-var markersGroup = L.layerGroup();
-
-var min, max;
-
 function renderMap(range) {
+        $('.humanRange').html(scaleRange());
         markersGroup.clearLayers();
+        totalCount = 0;
         var limit = {};
         if (range) {
                 limit = { $and: [
@@ -82,6 +87,9 @@ function renderMap(range) {
                                 max = document.date;
                                 modified = true;
                         }
+                        totalCount += Number(document.amplitude);
+                        $('.totalCount').html(totalCount);
+
                         var amplitude = 2 + document.amplitude/20;
                         var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
                         var marker = L.marker(document.latlng ,
