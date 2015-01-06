@@ -54,11 +54,8 @@ function renderScale (from, to) {
 	        density: 10
         });
 
-
         $("#range").Link('lower').to('-inline-<div class="tooltip"></div>', setDate);
         $("#range").Link('upper').to('-inline-<div class="tooltip"></div>', setDate);
-
-        console.log (range);
 }
 
 function renderMap(range) {
@@ -71,13 +68,11 @@ function renderMap(range) {
                         {date: { $gt: formatDate(range[0])}},
                         {date: { $lt: formatDate(range[1])}}
                 ]};
-                console.log (formatDate(range[0]),formatDate(range[1]));
         };
 
         var query = Markers.find(limit);
         query.observe({
                 added: function(document) {
-                        //          console.log ('added', document);
                         var modified = false;
                         if (!min || min > document.date) {
                                 min = document.date;
@@ -126,10 +121,5 @@ Template.map.rendered = function() {
   L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
 
         markersGroup.addTo(map);
-
-    map.on('dblclick', function(event) {
-        console.log (event.latlng);
-//    Markers.insert({latlng: event.latlng});
-    });
         renderMap();
 };
