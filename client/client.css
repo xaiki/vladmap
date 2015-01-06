@@ -33,6 +33,11 @@
 	width: 100px;
 }
 
+.map-info {
+    position: absolute;
+    top: 0;
+}
+
 .usuarios-sin-luz, .human-range {
     display: inline-block;
 }
