@@ -1,5 +1,9 @@
 // create marker collection
-Markers = new Meteor.Collection('markers');
+var Markers = new Meteor.Collection('markers');
+var icons = {
+    edenor: L.divIcon({className: 'map-icon-edenor'}),
+    edesur: L.divIcon({className: 'map-icon-edesur'})
+};
 
 Meteor.subscribe('markers');
 
@@ -21,7 +25,8 @@ Template.map.rendered = function() {
   query.observe({
       added: function(document) {
           console.log ('added', document);
-      var marker = L.marker(document).addTo(map);
+          var marker = L.marker(document.latlng ,
+                                {icon: icons[document.corp.toLowerCase()]}).addTo(map);
     },
     removed: function(oldDocument) {
       layers = map._layers;
