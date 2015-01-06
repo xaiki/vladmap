@@ -6,7 +6,7 @@
 insecure
 jquery
 standard-app-packages
-leaflet
-collection-api
+mrt:leaflet
+mrt:collection-api
 rcy:nouislider
 momentjs:moment

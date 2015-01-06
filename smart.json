@@ -1,7 +1,0 @@
-{
-  "meteor": {},
-  "packages": {
-    "leaflet": {},
-    "collection-api": {}
-  }
-}
