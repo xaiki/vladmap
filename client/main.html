@@ -12,19 +12,25 @@
   <div id="container">
 
     <h1 class="title">Cortes de luz</h1>
-    <div class="human-range">
-      <div class="humanRange"></div>
-    </div>
-    <div class="usuarios-sin-luz">
-      <span class="totalCount"></span>
-      Usuarios sin luz
-    </div>
+    {{> mapinfo}}
     {{> map}}
     {{> range}}
     <div class="notice">
       © xaiki -- AGPLv3
     </div>
   </div>
+</template>
+
+<template name="mapinfo">
+    <div class="map-info">
+      <div class="human-range">
+        <div class="humanRange"></div>
+      </div>
+      <div class="usuarios-sin-luz">
+        <span class="totalCount"></span>
+        Usuarios sin luz
+      </div>
+    </div>
 </template>
 
 <template name="map">
