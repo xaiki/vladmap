@@ -12,9 +12,9 @@ Template.map.rendered = function() {
 
   var map = L.map('map', {
     doubleClickZoom: false
-  }).setView([-34.6, -58.5], 11);
+  }).setView([-34.6, -58.5], 10);
 
-  L.tileLayer.provider('Thunderforest.Outdoors').addTo(map);
+  L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
 
     map.on('dblclick', function(event) {
         console.log (event.latlng);
