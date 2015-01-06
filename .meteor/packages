@@ -8,3 +8,5 @@ jquery
 standard-app-packages
 leaflet
 collection-api
+rcy:nouislider
+momentjs:moment

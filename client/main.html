@@ -4,15 +4,20 @@
 </head>
 
 <body>
+  <div id="container">
+    <h1 class="title">Cortes de luz</h1>
     {{> map}}
+    {{> range}}
+    <div class="notice">
+
+    </div>
+  </div>
 </body>
 
 <template name="map">
-    <div id="container">
-      <h1 class="title">Cortes de luz</h1>
-      <div id="map" class="map"></div>
-      <div class="notice">
-        0h h1 /* hacks */ xaiki
-      </div>
-    </div>
+  <div id="map" class="map"></div>
+</template>
+
+<template name="range">
+  <div id="range"></div>
 </template>
