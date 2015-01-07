@@ -7,8 +7,8 @@ var map;
 var markersGroup = L.layerGroup();
 
 var min, max;
-var totalCount = 0;
-
+var userCount = 0;
+var caseCount = 0;
 
 moment.locale('es');
 Meteor.subscribe('markers');
@@ -59,14 +59,15 @@ function renderScale (from, to) {
         $("#range").Link('upper').to('-inline-<div class="tooltip"></div>', setDate);
 }
 
-function renderTotal (total) {
-        $('.totalCount').html(totalCount);
+function renderTotal (userCount, caseCount) {
+        $('.userCount').html(userCount);
+        $('.caseCount').html(caseCount);
 }
 
 function renderMap(range) {
         $('.humanRange').html(scaleRange());
         markersGroup.clearLayers();
-        totalCount = 0;
+        userCount = caseCount = 0;
         var limit = {};
         if (range) {
                 limit = { $and: [
@@ -88,8 +89,9 @@ function renderMap(range) {
                                 modified = true;
                         }
 
-                        totalCount += Number(document.amplitude);
-                        throttledTotal(totalCount);
+                        userCount += Number(document.amplitude);
+                        caseCount++;
+                        throttledTotal(userCount, caseCount);
 
                         var amplitude = 2 + document.amplitude/10;
                         var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
