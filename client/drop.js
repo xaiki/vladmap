@@ -7,6 +7,9 @@ Template.main.rendered = function () {
                 e.stopPropagation();
                 e.preventDefault();
 
+                showDropTarget();
+                $('.drop i')[0].setAttribute('class', 'fa fa-refresh fa-spin huge');
+
                 var files = e.dataTransfer.files;
                 var i,f;
                 for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -35,8 +38,10 @@ Template.main.rendered = function () {
                 data.forEach (function (d) {
                         Markers.insert (d);
                 });
-                
-                setTimeout(location.reload, 1000);
+
+                //                setTimeout(location.reload, 1000);
+                $('.drop i')[0].setAttribute('class', 'fa fa-check huge');
+                console.log ("ok, go refresh");
 
         };
         function parseWB(wb) {
