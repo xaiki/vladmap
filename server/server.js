@@ -12,3 +12,9 @@ Meteor.startup(function () {
     collectionApi.addCollection(Markers, 'markers');
     collectionApi.start();
 });
+
+Meteor.methods({
+        reset: function (col) {
+                Markers.remove({});
+        }
+});
