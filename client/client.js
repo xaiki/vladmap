@@ -1,5 +1,5 @@
 // create marker collection
-var Markers = new Meteor.Collection('markers');
+//var Markers = new Meteor.Collection('markers');
 
 var throttledScale = _.throttle(renderScale, 1000, {leading: false});
 var throttledTotal = _.throttle(renderTotal, 1000, {leading: false});
