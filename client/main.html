@@ -10,13 +10,16 @@
 
 <template name="main">
   <div id="container">
+    <div class="nodrop">
+      <h1 class="title">Cortes de luz</h1>
+      {{> mapinfo}}
+      {{> map}}
 
-    <h1 class="title">Cortes de luz</h1>
-    {{> mapinfo}}
-    {{> map}}
-    {{> range}}
-    <div class="notice">
-      © xaiki -- AGPLv3
+      {{> range}}
+      <div class="notice">
+        © xaiki -- AGPLv3
+      </div>
+      {{> drop}}
     </div>
   </div>
 </template>
@@ -35,6 +38,12 @@
 
 <template name="map">
   <div id="map" class="map"></div>
+</template>
+
+<template name="drop">
+  <div class="drop" style="display: none;" >
+    <i class="fa fa-download huge"></i>
+  </div>
 </template>
 
 <template name="range">

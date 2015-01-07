@@ -6,6 +6,7 @@ Template.main.rendered = function () {
         function handleDrop(e) {
                 e.stopPropagation();
                 e.preventDefault();
+
                 var files = e.dataTransfer.files;
                 var i,f;
                 for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -34,7 +35,9 @@ Template.main.rendered = function () {
                 data.forEach (function (d) {
                         Markers.insert (d);
                 });
-                console.log ('ok, reload now');
+                
+                setTimeout(location.reload, 1000);
+
         };
         function parseWB(wb) {
                 var sheet = wb.Sheets['BASE BARRIOS BT'];
@@ -87,11 +90,24 @@ Template.main.rendered = function () {
                 e.stopPropagation();
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'copy';
+                showDropTarget();
         }
+
+        function showDropTarget() {
+                $('.drop').show();
+        };
+
+        function hideDropTarget() {
+                $('.drop').hide();
+        };
 
         if(drop.addEventListener) {
                 drop.addEventListener('dragenter', handleDragover, false);
                 drop.addEventListener('dragover', handleDragover, false);
                 drop.addEventListener('drop', handleDrop, false);
+
+                drop.addEventListener('dragleave', hideDropTarget, false);
+                drop.addEventListener('dragend', hideDropTarget, false);
+
         }
 };
