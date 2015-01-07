@@ -7,8 +7,8 @@ var map;
 var markersGroup = L.layerGroup();
 
 var min, max;
-var userCount = 0;
-var caseCount = 0;
+var userCount = {total: 0, edenor: 0, edesur: 0};
+var caseCount = {total: 0, edenor: 0, edesur: 0};
 
 moment.locale('es');
 Meteor.subscribe('markers');
@@ -60,14 +60,20 @@ function renderScale (from, to) {
 }
 
 function renderTotal (userCount, caseCount) {
-        $('.userCount').html(userCount);
-        $('.caseCount').html(caseCount);
+        $('.userCountTotal').html(userCount.total);
+        $('.userCountEDENOR').html(userCount.edenor);
+        $('.userCountEDESUR').html(userCount.edesur);
+        
+        $('.caseCountTotal').html(caseCount.total);
+        $('.caseCountEDENOR').html(caseCount.edenor);
+        $('.caseCountEDESUR').html(caseCount.edesur);
 }
 
 function renderMap(range) {
         $('.humanRange').html(scaleRange());
         markersGroup.clearLayers();
-        userCount = caseCount = 0;
+        userCount = {total: 0, edenor: 0, edesur: 0};
+        caseCount = {total: 0, edenor: 0, edesur: 0};
         var limit = {};
         if (range) {
                 limit = { $and: [
@@ -88,9 +94,13 @@ function renderMap(range) {
                                 max = document.date;
                                 modified = true;
                         }
+                        var corp = document.corp.toLowerCase();
+                        userCount.total += Number(document.amplitude);
+                        userCount[corp] += Number(document.amplitude);
 
-                        userCount += Number(document.amplitude);
-                        caseCount++;
+                        caseCount.total++;
+                        caseCount[corp]++;
+
                         throttledTotal(userCount, caseCount);
 
                         var amplitude = 2 + document.amplitude/10;
