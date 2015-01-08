@@ -34,10 +34,7 @@ Template.main.rendered = function () {
         }
 
         function insertData(data) {
-                Meteor.call ('reset', 'markers');
-                data.forEach (function (d) {
-                        Markers.insert (d);
-                });
+                Meteor.call ('reset', 'markers', data);
 
                 //                setTimeout(location.reload, 1000);
                 $('.drop i')[0].setAttribute('class', 'fa fa-check huge');
