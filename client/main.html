@@ -20,8 +20,23 @@
         © xaiki -- AGPLv3
       </div>
       {{> drop}}
+      {{> errors}}
     </div>
   </div>
+</template>
+
+<template name="errors">
+  <div class="error-messages">
+    <ul class="errors">
+      {{#each errors}}
+      {{> error}}
+      {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="error">
+  <li class="{{type}}">{{value}}</li>
 </template>
 
 <template name="mapinfo">

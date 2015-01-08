@@ -1,6 +1,14 @@
 var dict = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
+var Errors = new Meteor.Collection(null);
+
+Template.errors.helpers({
+        errors: function() {
+                return Errors.find();
+        }
+});
+
 Template.main.rendered = function () {
         var drop = document.getElementById('container');
         function handleDrop(e) {
@@ -25,6 +33,11 @@ Template.main.rendered = function () {
                                         wb = XLS.parse_xlscfb(cfb);
                                 } catch (e) {
                                         wb = XLSX.read(data, {type: 'binary'});
+                                }
+                                if (!wb) {
+                                        Errors.insert ({type: 'error',
+                                                        value: 'Could not read: ' + name});
+                                        return;
                                 }
                                 insertData(parseWB(wb));
                         };
@@ -63,7 +76,7 @@ Template.main.rendered = function () {
                         else if (value === 'Y')
                                 kmap.lat = k;
                         else
-                                console.log ('WARNING: ignoring', value);
+                                Errors.insert ({type: 'warning', value: 'ignoring' + value});
                 });
 
                 /* 1 is the title, ignore that */;
@@ -73,7 +86,8 @@ Template.main.rendered = function () {
                         _.each(kmap,  function (v, k) {
                                 var cell = sheet[v + i];
                                 if (!cell) {
-                                        console.error ('no data at', v + i, 'bailing out, I will not parse that line');
+                                        var error = 'no data at' + v + i + 'bailing out, I will not parse that line';
+                                        Errors.insert({type: 'error', value: error});
                                         return;
                                 }
                                 value[k] = cell.v;
