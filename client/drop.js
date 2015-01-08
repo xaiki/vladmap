@@ -93,6 +93,11 @@ Template.main.rendered = function () {
                                 value[k] = cell.v;
                         });
 
+                        if  (Math.abs(value.lat) > 100 || Math.abs(value.lng) > 100) {
+                                Errors.insert({type: 'error', value: 'values out of bound for row: ' + i});
+                                return;
+                        }
+
                         value.latlng = {lat: value.lat, lng: value.lng};
                         delete (value.lat);
                         delete (value.lng);
