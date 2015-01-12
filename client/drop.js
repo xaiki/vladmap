@@ -94,9 +94,11 @@ Template.main.rendered = function () {
                         });
 
                         if  (Math.abs(value.lat) > 100 || Math.abs(value.lng) > 100) {
-                                error('lat/lng values out of bound for row: ' + i
-                                     + ' lat: ' + value. lat + ' lng: ' + value.lng);
-                                continue;
+                                value.lat = Number(value.lat.toString().replace(/(-?..)/, '$1\.'));
+                                value.lng = Number(value.lng.toString().replace(/(-?..)/, '$1\.'));
+                                warn('lat/lng values out of bound for row: ' + i
+                                     + ' fixing as lat: ' + value. lat + ' lng: ' + value.lng);
+
                         }
 
                         value.latlng = {lat: value.lat, lng: value.lng};
