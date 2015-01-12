@@ -16,8 +16,9 @@ Meteor.startup(function () {
 Meteor.methods({
         reset: function (col, data) {
                 Markers.remove({});
-                data.forEach (function (d) {
-                        Markers.insert (d);
-                });
+                if (data)
+                        data.forEach (function (d) {
+                                Markers.insert (d);
+                        });
         }
 });
