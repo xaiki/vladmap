@@ -66,7 +66,7 @@ Template.main.rendered = function () {
                         var value = cell.v;
                         if      (value.toUpperCase() === 'EMPRESA')
                                 kmap.corp = k;
-                        else if (value === 'Cantidad_Est_Usu_Afectados')
+                        else if (value.match(/Cant(idad)?_Est_Usu_Afectados/i))
                                 kmap.amplitude = k;
                         else if (value === 'Fecha_Reclamo')
                                 kmap.date = k;
