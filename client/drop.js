@@ -1,13 +1,6 @@
 var dict = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-
-var Errors = new Meteor.Collection(null);
-
-Template.errors.helpers({
-        errors: function() {
-                return Errors.find();
-        }
-});
+var SHEET_NAME = 'BASE BARRIOS BT';
 
 Template.main.rendered = function () {
         var drop = document.getElementById('container');
@@ -35,11 +28,14 @@ Template.main.rendered = function () {
                                         wb = XLSX.read(data, {type: 'binary'});
                                 }
                                 if (!wb) {
-                                        Errors.insert ({type: 'error',
-                                                        value: 'Could not read: ' + name});
+                                        error('Could not read: ' + name);
                                         return;
                                 }
-                                insertData(parseWB(wb));
+                                try {
+                                        insertData(parseWB(wb));
+                                } catch (err) {
+                                        return error (err.message + err.stack);
+                                }
                         };
                         reader.readAsBinaryString(f);
                         //reader.readAsArrayBuffer(f);
@@ -55,15 +51,20 @@ Template.main.rendered = function () {
 
         };
         function parseWB(wb) {
-                var sheet = wb.Sheets['BASE BARRIOS BT'];
+                var fsheet = wb.SheetNames.pop();
+                var sheet = wb.Sheets[SHEET_NAME] || wb.Sheets[fsheet];
                 var kmap = {};
                 var data = [];
+
+                if (!sheet)
+                        return error ("Can't find sheet: " + SHEET_NAME + ' or ', fsheet);
+
                 dict.forEach(function (k) {
                         var cell = sheet[k + '1'];
                         if (!cell)
                                 return ; /* no cell at "${k}1" */
                         var value = cell.v;
-                        if      (value === 'EMPRESA')
+                        if      (value.toUpperCase() === 'EMPRESA')
                                 kmap.corp = k;
                         else if (value === 'Cantidad_Est_Usu_Afectados')
                                 kmap.amplitude = k;
@@ -76,31 +77,33 @@ Template.main.rendered = function () {
                         else if (value === 'Y')
                                 kmap.lat = k;
                         else
-                                Errors.insert ({type: 'warning', value: 'ignoring' + value});
+                                warn('ignoring: ' + value);
                 });
 
                 /* 1 is the title, ignore that */;
 
                 for (var i = 2; sheet[kmap.corp + i]; i++) {
                         var value = {};
-                        _.each(kmap,  function (v, k) {
+                        _.each(kmap, function (v, k) {
                                 var cell = sheet[v + i];
                                 if (!cell) {
-                                        var error = 'no data at' + v + i + 'bailing out, I will not parse that line';
-                                        Errors.insert({type: 'error', value: error});
+                                        error('no data at' + v + i + 'bailing out, I will not parse that line');
                                         return;
                                 }
                                 value[k] = cell.v;
                         });
 
                         if  (Math.abs(value.lat) > 100 || Math.abs(value.lng) > 100) {
-                                Errors.insert({type: 'error', value: 'values out of bound for row: ' + i});
-                                return;
+                                error('lat/lng values out of bound for row: ' + i
+                                     + ' lat: ' + value. lat + ' lng: ' + value.lng);
+                                continue;
                         }
 
                         value.latlng = {lat: value.lat, lng: value.lng};
                         delete (value.lat);
                         delete (value.lng);
+
+                        value.corp = value.corp.match(/(edesur|edenor)/i)[0].toLowerCase();
 
                         data.push(value);
                 }
