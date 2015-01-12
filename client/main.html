@@ -12,27 +12,30 @@
   <div id="container">
     <div class="nodrop">
       <h1 class="title">Cortes de luz</h1>
+      {{> adminicons}}
+      {{> errors}}
       {{> mapinfo}}
       {{> map}}
-
       {{> range}}
       <div class="notice">
         © xaiki -- AGPLv3
       </div>
       {{> drop}}
-      {{> errors}}
     </div>
   </div>
 </template>
 
 <template name="errors">
-  <div class="error-messages">
+<div class="collapse" id="error-collapse">
+  <div class="well">
+    <title>Errors/Warnings</title>
     <ul class="errors">
       {{#each errors}}
-      {{> error}}
+        <li><a href="#">{{> error}}</a></li>
       {{/each}}
     </ul>
   </div>
+</div>
 </template>
 
 <template name="error">
@@ -74,9 +77,12 @@
   <div id="range"></div>
 </template>
 
-<template name="admin-icons">
+<template name="adminicons">
       <div id="account-actions">
-      <a href="#" data-title="Home"><i class="fa fa-home"></i></a>
-      <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a>
+        <a href="#" data-title="Home"><i class="fa fa-home"></i></a>
+        <div class="dropdown">
+          <a href="#" id="{{nomessages}}messages" data-title="Messages" data-newmessages={{newmessages}} data-newerrors={{newerrors}} data-newwarnings={{newwarnings}} data-toggle="collapse" data-target="#error-collapse" controls="error-collapse"><i class="fa fa-inbox"></i></a>
+        </div>
+        <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a>
     </div>
 </template>

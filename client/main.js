@@ -1,7 +1,10 @@
 $(function() {
         window.Markers = new Meteor.Collection('markers');
-  $(window).resize(function() {
-    $('#map').css('height', window.innerHeight - 82 - 45);
-  });
-  $(window).resize(); // trigger resize event
+        $(window).resize(function() {
+                $('#map').css('height', window.innerHeight - 82 - 45);
+        });
+        $(window).resize(); // trigger resize event
+        $(function () {
+                $('[data-toggle="popover"]').popover()
+        })
 });
