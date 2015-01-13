@@ -19,6 +19,16 @@
     background-color: #0088ee;
 }
 
+.map-icon-cut {
+    width: 15px;
+    height: 15px;
+    border-radius: 0px!important;
+    opacity: 1!important;
+    border-color: #ff0022;
+    background-color: #ff2222;
+}
+
+
 .tooltip {
 	display: block;
 	position: absolute;

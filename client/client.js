@@ -63,10 +63,14 @@ function renderTotal (userCount, caseCount) {
         $('.userCountTotal').html(userCount.total);
         $('.userCountEDENOR').html(userCount.edenor);
         $('.userCountEDESUR').html(userCount.edesur);
-        
+
         $('.caseCountTotal').html(caseCount.total);
         $('.caseCountEDENOR').html(caseCount.edenor);
         $('.caseCountEDESUR').html(caseCount.edesur);
+}
+
+function popupContent (document) {
+        return '<textarea rows="4" cols="40" id="' + document._id + '">'+ document.text +'</textarea>';
 }
 
 function renderMap(range) {
@@ -83,26 +87,32 @@ function renderMap(range) {
         };
 
         var query = Markers.find(limit);
+
+        function insertCorp (document) {
+                var modified = false;
+                if (!min || min > document.date) {
+                        min = document.date;
+                        modified = true;
+                }
+                if (!max || max < document.date) {
+                        max = document.date;
+                        modified = true;
+                }
+                var corp = document.corp.toLowerCase();
+                userCount.total += Number(document.amplitude);
+                userCount[corp] += Number(document.amplitude);
+
+                caseCount.total++;
+                caseCount[corp]++;
+
+                throttledTotal(userCount, caseCount);
+
+                if (modified) {
+                        throttledScale(min, max);
+                }
+        }
         query.observe({
                 added: function(document) {
-                        var modified = false;
-                        if (!min || min > document.date) {
-                                min = document.date;
-                                modified = true;
-                        }
-                        if (!max || max < document.date) {
-                                max = document.date;
-                                modified = true;
-                        }
-                        var corp = document.corp.toLowerCase();
-                        userCount.total += Number(document.amplitude);
-                        userCount[corp] += Number(document.amplitude);
-
-                        caseCount.total++;
-                        caseCount[corp]++;
-
-                        throttledTotal(userCount, caseCount);
-
                         var amplitude = 2 + document.amplitude/10;
                         var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
                         var marker = L.marker(document.latlng ,
@@ -110,24 +120,46 @@ function renderMap(range) {
                                                title: document.amplitude + ' usuarios',
                                                opacity: 0.8
                                               }).addTo(markersGroup);
-                        if (modified) {
-                                throttledScale(min, max);
+                        marker.id = document._id;
+                        if (document.date) {
+                                insertCorp();
+                        } else {
+                                marker.on('dblclick', function(event) {
+                                        Markers.remove(event.target.id);
+                                });
+                                marker.bindPopup(popupContent(document))
+                                var popup = marker.getPopup();
+
+                                popup.on('close', function (e) {
+                                        var doc = Markers.findOne(marker.id);
+                                        popup.setContent(popupContent(doc));
+                                });
                         }
                 },
                 removed: function(oldDocument) {
-                        layers = map._layers;
-                        var key, val;
-                        for (key in layers) {
-                                val = layers[key];
-                                if (val) {
-                                        if (val.lat === oldDocument.lat && val.lng === oldDocument.lng) {
-                                                map.removeLayer(val);
-                                        }
-                                }
-                        }
+                        markerById(markersGroup, oldDocument._id, function (layer) {
+                                markersGroup.removeLayer (layer);
+                        });
                 }
         });
 }
+
+function markerById(group, id, fn) {
+        group.getLayers().forEach(function (layer) {
+                if (layer.id === id) {
+                        fn (layer);
+                }
+        });
+}
+
+Template.map.events({
+        'input textarea': function (event) {
+                var id = event.target.id;
+                var doc = Markers.findOne(id);
+                doc.text = event.target.value;
+                Markers.update(id, doc);
+        }
+});
 
 Template.map.rendered = function() {
   L.Icon.Default.imagePath = 'packages/leaflet/images';
@@ -137,6 +169,10 @@ Template.map.rendered = function() {
   }).setView([-34.6, -58.5], 10);
 
   L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
+        map.on('dblclick', function(event) {
+                console.log (event.latlng);
+                Markers.insert({corp: 'cut', text: 'notas', latlng: event.latlng});
+        });
 
         markersGroup.addTo(map);
         renderMap();
