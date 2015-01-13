@@ -126,15 +126,22 @@ function renderMap(range) {
                                 insertCorp();
                         } else {
                                 marker.on('dblclick', function(event) {
-                                        Markers.remove(event.target.id);
+                                        var doc = Markers.findOne(event.target.id);
+                                        Markers.remove(doc._id);
+                                        log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                                 });
                                 marker.bindPopup(popupContent(document));
                                 var popup = marker.getPopup();
+                                popup.on('open', function (e) {
+                                        delete lastValue[marker.id];
+                                });
                                 popup.on('close', function (e) {
+                                        if (! lastValue[marker.id])
+                                                return;
                                         var doc = Markers.findOne(marker.id);
                                         doc.text = lastValue[marker.id];
                                         Markers.update(marker.id, doc);
-                                        console.log ('updating', doc);
+                                        log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                                 });
                         }
                 },
@@ -177,6 +184,7 @@ Template.map.rendered = function() {
         map.on('dblclick', function(event) {
                 console.log (event.latlng);
                 Markers.insert({corp: 'cut', text: 'notas', latlng: event.latlng});
+                log ('Corte creado:' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
         markersGroup.addTo(map);

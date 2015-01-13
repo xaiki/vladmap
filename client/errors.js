@@ -3,6 +3,12 @@ var Errors = new Meteor.Collection(null);
 Template.errors.helpers({
         errors: function() {
                 return Errors.find();
+        },
+});
+
+Template.error.helpers({
+        prettyDate: function (date) {
+                return moment.unix(date).fromNow();
         }
 });
 
@@ -21,12 +27,27 @@ Template.adminicons.helpers({
         }
 });
 
+
+window.log = function(string) {
+        Errors.insert ({
+                date: moment().unix(),
+                type: 'log',
+                value: string
+        });
+}
+
 window.error = function(string) {
-        Errors.insert ({type: 'error',
-                        value: string});
+        Errors.insert ({
+                date: moment().unix(),
+                type: 'error',
+                value: string
+        });
 }
 
 window.warn = function(string) {
-        Errors.insert ({type: 'warning',
-                        value: string});
+        Errors.insert ({
+                date: moment().unix(),
+                type: 'warning',
+                value: string
+        });
 }
