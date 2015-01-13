@@ -28,10 +28,10 @@
 <template name="errors">
 <div class="collapse" id="error-collapse">
   <div class="well">
-    <title>Errors/Warnings</title>
+    <h1 class="title">Errores/Historial</h1>
     <ul class="errors">
       {{#each errors}}
-        <li><a href="#">{{> error}}</a></li>
+        {{> error}}
       {{/each}}
     </ul>
   </div>
@@ -39,7 +39,7 @@
 </template>
 
 <template name="error">
-  <li class="{{type}}"><span class="date">{{prettyDate date}}</span> {{value}}</li>
+  <li class="{{type}}" id="{{_id}}"><a href="#"><i class="fa fa-close"></i><span class="date">{{prettyDate date}}</span> {{value}}</a></li>
 </template>
 
 <template name="mapinfo">
@@ -85,4 +85,20 @@
         </div>
         <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a>
     </div>
+</template>
+
+<template name="cuttext">
+<textarea rows="4" cols="40" id="{{_id}}" autofocus
+  placeholder="{{#if text}}nothing{{else}}Descripción del corte{{/if}}">{{text}}</textarea>
+    <div class="btn-group cut-type-select" id="{{_id}}" data-toggle="buttons">
+      <label class="btn btn-danger" id="active" checked={{active}}>
+        <input type="radio" name="options" autocomplete="off" checked>Activo
+      </label>
+      <label class="btn btn-warning" id="projected" checked={{projected}}>
+        <input type="radio" name="options" autocomplete="off">Previsto
+      </label>
+    </div>
+    <button type="button" class="btn btn-primary"><i class="fa fa-close">cerrar caso</i></button>
+
+
 </template>

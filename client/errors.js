@@ -1,9 +1,33 @@
-var Errors = new Meteor.Collection(null);
+var Errors = new Meteor.Collection (null);
+var Logs   = new Meteor.Collection ('enrelogs');
+
+Meteor.subscribe('enrelogs');
+
+function getCollections() {
+        return Errors.find().fetch().concat(Logs.find().fetch());
+}
+
+setInterval(function() {
+        var id = Logs.insert({_id: 'noshow'});
+        Logs.remove(id);
+}, 1000);
 
 Template.errors.helpers({
         errors: function() {
-                return Errors.find();
+                return Logs.find().fetch();
         },
+});
+
+Template.errors.events({
+        'click li': function (e) {
+                var id = e.target.parentElement.id;
+                var type = e.target.parentElement.className;
+
+                if (type === 'log')
+                        Logs.remove(id);
+                else
+                        Errors.remove(id);
+        }
 });
 
 Template.error.helpers({
@@ -14,10 +38,10 @@ Template.error.helpers({
 
 Template.adminicons.helpers({
         newmessages: function() {
-                return Errors.find().fetch().length || null;
+                return getCollections().length || null;
         },
         nomessages: function() {
-                return Errors.find().fetch().length?null:'no';
+                return getCollections().length?null:'no';
         },
         newerrors: function() {
                 return Errors.find({type: 'error'}).fetch().length || null;
@@ -28,26 +52,29 @@ Template.adminicons.helpers({
 });
 
 
-window.log = function(string) {
-        Errors.insert ({
+function makeLogable (type, string, object) {
+        var ret = {
                 date: moment().unix(),
-                type: 'log',
-                value: string
-        });
+                value: string,
+                type: type
+        };
+        if (object && object._id)
+                ret.id = object._id;
+
+        return ret;
 }
 
-window.error = function(string) {
-        Errors.insert ({
-                date: moment().unix(),
-                type: 'error',
-                value: string
-        });
+window.log = function(string, object) {
+        var e = makeLogable ('log', string, object);
+        Logs.insert (e);
 }
 
-window.warn = function(string) {
-        Errors.insert ({
-                date: moment().unix(),
-                type: 'warning',
-                value: string
-        });
+window.error = function(string, object) {
+        var e = makeLogable ('error', string, object);
+        Errors.insert (e);
+}
+
+window.warn = function(string, object) {
+        var e = makeLogable ('warn', string, object);
+        Errors.insert (e);
 }

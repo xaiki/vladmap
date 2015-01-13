@@ -71,7 +71,7 @@ function renderTotal (userCount, caseCount) {
 }
 
 function popupContent (document) {
-        return '<textarea rows="4" cols="40" id="' + document._id + '">'+ document.text +'</textarea>';
+        return Blaze.toHTMLWithData(Template.cuttext, document);
 }
 
 function renderMap(range) {
@@ -112,10 +112,23 @@ function renderMap(range) {
                         throttledScale(min, max);
                 }
         }
+
+        function makeIcon(document) {
+                var className;
+                var amplitude = 2 + document.amplitude/10;
+
+                if (document.state)
+                        className = 'cut-' + document.state;
+                else
+                        className = document.corp.toLowerCase();
+
+                return L.divIcon({className: 'map-icon-' + className,
+                                  iconSize: [amplitude, amplitude]});
+        }
+
         query.observe({
                 added: function(document) {
-                        var amplitude = 2 + document.amplitude/10;
-                        var icon = L.divIcon({className: 'map-icon-' + document.corp.toLowerCase(), iconSize: [amplitude, amplitude]});
+                        var icon = makeIcon(document);
                         var marker = L.marker(document.latlng ,
                                               {icon: icon,
                                                title: document.amplitude + ' usuarios',
@@ -131,9 +144,11 @@ function renderMap(range) {
                                         log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                                 });
                                 marker.bindPopup(popupContent(document));
+
                                 var popup = marker.getPopup();
                                 popup.on('open', function (e) {
                                         delete lastValue[marker.id];
+                                        $('textarea').focus();
                                 });
                                 popup.on('close', function (e) {
                                         if (! lastValue[marker.id])
@@ -143,11 +158,15 @@ function renderMap(range) {
                                         Markers.update(marker.id, doc);
                                         log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                                 });
+                                if (! document.text) {
+                                        marker.openPopup();
+                                }
                         }
                 },
                 changed: function (document) {
                         markerById(markersGroup, document._id, function (layer) {
                                 layer.getPopup().setContent(popupContent(document));
+                                layer.setIcon (makeIcon(document));
                         });
                 },
                 removed: function(oldDocument) {
@@ -169,9 +188,17 @@ function markerById(group, id, fn) {
 Template.map.events({
         'input textarea': function (e) {
                 lastValue[e.target.id] = e.target.value;
+        },
+        'click .cut-type-select': function (e) {
+                var id = e.target.parentElement.id;
+                var state = e.target.id;
+
+                var doc = Markers.findOne(id);
+                doc.state = state;
+
+                Markers.update(id, doc);
         }
 });
-
 
 Template.map.rendered = function() {
   L.Icon.Default.imagePath = 'packages/leaflet/images';
@@ -183,7 +210,7 @@ Template.map.rendered = function() {
   L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
         map.on('dblclick', function(event) {
                 console.log (event.latlng);
-                Markers.insert({corp: 'cut', text: 'notas', latlng: event.latlng});
+                Markers.insert({corp: 'cut', latlng: event.latlng});
                 log ('Corte creado:' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
