@@ -217,7 +217,7 @@ Template.map.rendered = function() {
         map.on('dblclick', function(event) {
                 console.log (event.latlng);
                 Markers.insert({corp: 'cut', latlng: event.latlng});
-                log ('Corte creado:' + event.latlng.lat + ', ' + event.latlng.lng);
+                log ('Corte creado: ' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
         markersGroup.addTo(map);
