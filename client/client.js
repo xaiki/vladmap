@@ -197,7 +197,12 @@ Template.map.events({
                 doc.state = state;
 
                 Markers.update(id, doc);
+        },
+        'click .close-marker': function (e) {
+                var id = e.target.id;
+                Markers.remove(id);
         }
+
 });
 
 Template.map.rendered = function() {
