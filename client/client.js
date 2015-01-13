@@ -9,6 +9,7 @@ var markersGroup = L.layerGroup();
 var min, max;
 var userCount = {total: 0, edenor: 0, edesur: 0};
 var caseCount = {total: 0, edenor: 0, edesur: 0};
+var lastValue = {};
 
 moment.locale('es');
 Meteor.subscribe('markers');
@@ -127,14 +128,20 @@ function renderMap(range) {
                                 marker.on('dblclick', function(event) {
                                         Markers.remove(event.target.id);
                                 });
-                                marker.bindPopup(popupContent(document))
+                                marker.bindPopup(popupContent(document));
                                 var popup = marker.getPopup();
-
                                 popup.on('close', function (e) {
                                         var doc = Markers.findOne(marker.id);
-                                        popup.setContent(popupContent(doc));
+                                        doc.text = lastValue[marker.id];
+                                        Markers.update(marker.id, doc);
+                                        console.log ('updating', doc);
                                 });
                         }
+                },
+                changed: function (document) {
+                        markerById(markersGroup, document._id, function (layer) {
+                                layer.getPopup().setContent(popupContent(document));
+                        });
                 },
                 removed: function(oldDocument) {
                         markerById(markersGroup, oldDocument._id, function (layer) {
@@ -153,13 +160,11 @@ function markerById(group, id, fn) {
 }
 
 Template.map.events({
-        'input textarea': function (event) {
-                var id = event.target.id;
-                var doc = Markers.findOne(id);
-                doc.text = event.target.value;
-                Markers.update(id, doc);
+        'input textarea': function (e) {
+                lastValue[e.target.id] = e.target.value;
         }
 });
+
 
 Template.map.rendered = function() {
   L.Icon.Default.imagePath = 'packages/leaflet/images';
