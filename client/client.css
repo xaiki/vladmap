@@ -19,13 +19,64 @@
     background-color: #0088ee;
 }
 
+@-webkit-keyframes buzz {
+    0% {
+        background: red;
+        opacity: 1!important;
+        width: 16px;
+        height: 16px;
+        left: 0px;
+        top : 0px;
+    }
+    100% {
+        background: red;
+        opacity: 1!important;
+        width: 16px;
+        height: 16px;
+        left: 0px;
+        top : 0px;
+    }
+    50% {
+        background: red;
+        opacity: 0.5;
+        left: -12px;
+        top : -12px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+@keyframes buzz {
+    from {
+        opacity: 1!important;
+        left: 20%;
+        background: blue;
+    }
+    to {
+        opacity: 0%;
+        left: 100%;
+        background: green;
+    }
+}
+
+.map-icon-cut-active:before {
+    display: block;
+    position: relative;
+    content: " ";
+    opacity: 1;
+
+    -webkit-animation-duration:4s;
+    -webkit-animation-name: buzz;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+}
 .map-icon-cut, .map-icon-cut-active, .map-icon-cut-projected {
     width: 16px;
     height: 16px;
     left: -8px;
     top: -8px;
     border-radius: 0px!important;
-    opacity: 1!important;
 }
 
 .map-icon-cut {
