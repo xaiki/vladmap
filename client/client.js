@@ -200,7 +200,7 @@ Template.map.events({
                 Markers.update(id, doc);
         },
         'click .close-marker': function (e) {
-                var id = e.target.id;
+                var id = e.target.id || e.target.parentElement.id;
                 Markers.remove(id);
         }
 
