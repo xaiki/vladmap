@@ -196,6 +196,7 @@ Template.map.events({
                 var doc = Markers.findOne(id);
                 doc.state = state;
 
+                log ('Corte cambio de estado: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ' -> ' + state);
                 Markers.update(id, doc);
         },
         'click .close-marker': function (e) {
