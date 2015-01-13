@@ -20,8 +20,10 @@
 }
 
 .map-icon-cut, .map-icon-cut-active, .map-icon-cut-projected {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
+    left: -8px;
+    top: -8px;
     border-radius: 0px!important;
     opacity: 1!important;
 }
