@@ -225,6 +225,13 @@ Template.map.rendered = function() {
                 log ('Corte creado: ' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
+        new L.Control.GeoSearch({
+                provider: new L.GeoSearch.Provider.OpenStreetMap({
+                        countrycodes: 'ar',
+                }),
+                showMarker: false,
+        }).addTo(map);
+
         markersGroup.addTo(map);
         renderMap();
 };
