@@ -133,6 +133,9 @@ function renderMap(range) {
                                 return;
                         var doc = Markers.findOne(marker.id);
                         doc.text = lastValue[marker.id];
+                        if (! doc.state)
+                                doc.state = 'active';
+
                         Markers.update(marker.id, doc);
                         log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                 });
