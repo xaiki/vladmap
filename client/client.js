@@ -237,7 +237,9 @@ Template.map.rendered = function() {
 
         new L.Control.GeoSearch({
                 provider: new L.GeoSearch.Provider.OpenStreetMap({
+                        viewbox: '-59.71,-33.68,-57.52,-35.5',
                         countrycodes: 'ar',
+                        'accept-language': 'es'
                 }),
                 showMarker: false,
         }).addTo(map);
