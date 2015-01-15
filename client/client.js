@@ -113,6 +113,33 @@ function renderMap(range) {
                 }
         }
 
+        function insertCut (document, marker) {
+                marker.on('dblclick', function(event) {
+                        var doc = Markers.findOne(event.target.id);
+                        Markers.remove(doc._id);
+                        log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
+                });
+                marker.bindPopup(popupContent(document));
+
+                var popup = marker.getPopup();
+                popup.on('open', function (e) {
+                        delete lastValue[marker.id];
+                        $('textarea').focus();
+                });
+                popup.on('close', function (e) {
+                        if (! lastValue[marker.id])
+                                return;
+                        var doc = Markers.findOne(marker.id);
+                        doc.text = lastValue[marker.id];
+                        Markers.update(marker.id, doc);
+                        log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
+                });
+                if (! document.text) {
+                        marker.openPopup();
+                }
+
+        }
+
         function makeIcon(document) {
                 var className;
                 var amplitude = 2 + document.amplitude/10;
@@ -136,31 +163,9 @@ function renderMap(range) {
                                               }).addTo(markersGroup);
                         marker.id = document._id;
                         if (document.date) {
-                                insertCorp();
+                                insertCorp(document);
                         } else {
-                                marker.on('dblclick', function(event) {
-                                        var doc = Markers.findOne(event.target.id);
-                                        Markers.remove(doc._id);
-                                        log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
-                                });
-                                marker.bindPopup(popupContent(document));
-
-                                var popup = marker.getPopup();
-                                popup.on('open', function (e) {
-                                        delete lastValue[marker.id];
-                                        $('textarea').focus();
-                                });
-                                popup.on('close', function (e) {
-                                        if (! lastValue[marker.id])
-                                                return;
-                                        var doc = Markers.findOne(marker.id);
-                                        doc.text = lastValue[marker.id];
-                                        Markers.update(marker.id, doc);
-                                        log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
-                                });
-                                if (! document.text) {
-                                        marker.openPopup();
-                                }
+                                insertCut(document, marker);
                         }
                 },
                 changed: function (document) {
