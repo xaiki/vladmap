@@ -11,6 +11,8 @@ var userCount = {total: 0, edenor: 0, edesur: 0};
 var caseCount = {total: 0, edenor: 0, edesur: 0};
 var lastValue = {};
 
+var RG = new L.ReverseGeoSearch({'accept-language':});
+
 moment.locale('es');
 Meteor.subscribe('markers');
 
@@ -138,6 +140,11 @@ function renderMap(range) {
                         marker.openPopup();
                 }
 
+                RG.Search (document.latlng, function (data) {
+                        var doc = Markers.findOne(marker.id);
+                        doc.geocode = data.display_name;
+                        Markers.update(doc._id, doc);
+                });
         }
 
         function makeIcon(document) {

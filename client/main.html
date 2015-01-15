@@ -90,6 +90,7 @@
 <template name="cuttext">
 <textarea rows="4" cols="40" id="{{_id}}" autofocus
   placeholder="{{#if text}}nothing{{else}}Descripción del corte{{/if}}">{{text}}</textarea>
+    <p><small>{{geocode}}</small></p>
     <div class="btn-group cut-type-select" id="{{_id}}" data-toggle="buttons">
       <label class="btn btn-danger" id="active" checked={{active}}>
         <input type="radio" name="options" autocomplete="off" checked>Activo
