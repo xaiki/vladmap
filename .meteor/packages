@@ -6,9 +6,9 @@
 insecure
 jquery
 standard-app-packages
-mrt:leaflet
 mrt:collection-api
 rcy:nouislider
 fortawesome:fontawesome
 rzymek:moment-locale-es
 twbs:bootstrap
+mrt:leaflet
