@@ -4,7 +4,11 @@
 var throttledScale = _.throttle(renderScale, 1000, {leading: false});
 var throttledTotal = _.throttle(renderTotal, 1000, {leading: false});
 var map;
-var markersGroup = L.layerGroup();
+var markersGroup = {
+        edenor: L.layerGroup(),
+        edesur: L.layerGroup(),
+        cortes: L.layerGroup()
+};
 
 var min, max;
 var userCount = {total: 0, edenor: 0, edesur: 0};
@@ -78,7 +82,9 @@ function popupContent (document) {
 
 function renderMap(range) {
         $('.humanRange').html(scaleRange());
-        markersGroup.clearLayers();
+        _.each (markersGroup, function (layer) {
+                layer.clearLayers();
+        });
         userCount = {total: 0, edenor: 0, edesur: 0};
         caseCount = {total: 0, edenor: 0, edesur: 0};
         var limit = {};
@@ -170,7 +176,7 @@ function renderMap(range) {
                                               {icon: icon,
                                                title: document.amplitude + ' usuarios',
                                                opacity: 0.8
-                                              }).addTo(markersGroup);
+                                              }).addTo(markersGroup[document.corp]);
                         marker.id = document._id;
                         if (document.date) {
                                 insertCorp(document);
@@ -179,14 +185,16 @@ function renderMap(range) {
                         }
                 },
                 changed: function (document) {
-                        markerById(markersGroup, document._id, function (layer) {
-                                layer.getPopup().setContent(popupContent(document));
+                        markerById(markersGroup[document.corp], document._id, function (layer) {
+                                if (!document.date)
+                                        layer.getPopup().setContent(popupContent(document));
+
                                 layer.setIcon (makeIcon(document));
                         });
                 },
                 removed: function(oldDocument) {
-                        markerById(markersGroup, oldDocument._id, function (layer) {
-                                markersGroup.removeLayer (layer);
+                        markerById(markersGroup[oldDocument.corp], oldDocument._id, function (layer) {
+                                markersGroup[oldDocument.corp].removeLayer (layer);
                         });
                 }
         });
@@ -231,7 +239,7 @@ Template.map.rendered = function() {
   L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
         map.on('dblclick', function(event) {
                 console.log (event.latlng);
-                Markers.insert({corp: 'cut', latlng: event.latlng});
+                Markers.insert({corp: 'cortes', latlng: event.latlng});
                 log ('Corte creado: ' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
@@ -244,6 +252,11 @@ Template.map.rendered = function() {
                 showMarker: false,
         }).addTo(map);
 
-        markersGroup.addTo(map);
+        _.each (markersGroup, function (layer) {
+                layer.addTo(map);
+        });
+
+        L.control.layers({}, markersGroup).addTo(map);
+
         renderMap();
 };
