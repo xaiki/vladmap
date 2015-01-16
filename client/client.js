@@ -157,12 +157,6 @@ function renderMap(range) {
                 if (! document.text) {
                         marker.openPopup();
                 }
-
-                RG.Search (document.latlng, function (data) {
-                        var doc = Markers.findOne(marker.id);
-                        doc.geocode = data.display_name;
-                        Markers.update(doc._id, doc);
-                });
         }
 
         function makeIcon(document) {
@@ -194,6 +188,15 @@ function renderMap(range) {
                                 insertCorp(document);
                         } else {
                                 insertCut(document, marker);
+                        }
+
+                        if (! document.geocode) {
+                                var doc = Markers.findOne(marker.id);
+                                RG.Search (document.latlng, function (data) {
+                                        var doc = Markers.findOne(marker.id);
+                                        doc.geocode = data.display_name;
+                                        Markers.update(doc._id, doc);
+                                });
                         }
                 },
                 changed: function (document) {
