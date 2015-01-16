@@ -121,6 +121,15 @@ function renderMap(range) {
                 }
         }
 
+        function migrate_cut_cortes (document) {
+                if (document.corp != 'cut')
+                        return false;
+
+                var doc = Markers.findOne(document._id);
+                doc.corp = 'cortes';
+                Markers.update (doc._id, doc);
+        };
+
         function insertCut (document, marker) {
                 marker.on('dblclick', function(event) {
                         var doc = Markers.findOne(event.target.id);
@@ -171,6 +180,9 @@ function renderMap(range) {
 
         query.observe({
                 added: function(document) {
+                        if (migrate_cut_cortes(document))
+                                return;
+
                         var icon = makeIcon(document);
                         var marker = L.marker(document.latlng ,
                                               {icon: icon,
