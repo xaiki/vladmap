@@ -185,11 +185,11 @@ function renderMap(range) {
                                                       }).addTo(markersGroup[document.corp]);
                                 marker.id = document._id;
                                 if (document.corp === 'cortes') {
-                                        insertCorp(document);
+                                        insertCut(document, marker);
                                 } else if (document.corp === 'history') {
                                         /* do nothing */
                                 } else {
-                                        insertCut(document, marker);
+                                        insertCorp(document);
                                 }
 
                                 if (! document.geocode) {
@@ -230,7 +230,7 @@ Template.map.events({
         'input textarea': function (e) {
                 lastValue[e.target.id] = e.target.value;
         },
-        'click .cortes-type-select': function (e) {
+        'click .cut-type-select': function (e) {
                 var id = e.target.parentElement.id;
                 var state = e.target.id;
 
