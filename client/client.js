@@ -160,7 +160,7 @@ function renderMap(range) {
                 var amplitude = 2 + document.amplitude/10;
 
                 if (document.state)
-                        className = 'cortes-' + document.state;
+                        className = document.corp + '-' + document.state;
                 else
                         className = document.corp.toLowerCase();
 
