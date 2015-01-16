@@ -4,6 +4,11 @@ Meteor.publish("markers", function () {
   return Markers.find();
 });
 
+var MarkersHistory = new Meteor.Collection('markershistory');
+Meteor.publish("markershistory", function () {
+        return MarkersHistory.find();
+});
+
 var Logs = new Meteor.Collection('enrelogs');
 Meteor.publish("enrelogs", function () {
   return Logs.find();
@@ -30,6 +35,7 @@ function makeLogable (type, string, object) {
 var log = function(string, object) {
         var e = makeLogable ('log', string, object);
         Logs.insert (e);
+        return e;
 }
 
 Meteor.startup(function () {
@@ -48,14 +54,31 @@ Meteor.startup(function () {
         });
 
         Markers.before.remove (function (id, doc) {
-                log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
+                if (doc.corp != 'cortes') /* HACK */
+                        return;
+
+                var l = log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
+                if (doc.state === 'active')  { /* only insert active cuts to history */
+                        doc.corp = 'history';
+                        doc.state = 'closed';
+                        doc.removed = l.date;
+                        doc.time = doc.removed - doc.created;
+                        MarkersHistory.insert (doc);
+                }
         });
 
-        Markers.after.insert (function (id, doc) {
-                log ('Corte creado: ' + doc.latlng.lat + ', ' + doc.latlng.lng);
+        Markers.before.insert (function (id, doc) {
+                if (doc.corp != 'cortes') /* HACK */
+                        return;
+
+                var l = log ('Corte creado: ' + doc.latlng.lat + ', ' + doc.latlng.lng);
+                doc.created = l.date;
         });
 
         Markers.after.update (function (id, doc) {
+                if (doc.corp != 'cortes') /* HACK */
+                        return;
+
                 log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text + ', state: ' + doc.state);
         });
 });

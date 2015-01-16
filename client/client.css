@@ -90,6 +90,7 @@
     animation-timing-function: ease-in-out;
 }
 
+.map-icon-history, .map-icon-history-closed,
 .map-icon-cortes, .map-icon-cortes-active, .map-icon-cortes-projected {
     width: 16px;
     height: 16px;
@@ -101,6 +102,11 @@
 .map-icon-cortes {
     border-color: green;
     background-color: green;
+}
+
+.map-icon-history, .map-icon-history-closed {
+    border-color: gray;
+    background-color: gray;
 }
 
 .map-icon-cortes-active {

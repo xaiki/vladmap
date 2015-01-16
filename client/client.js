@@ -1,5 +1,5 @@
 // create marker collection
-//var Markers = new Meteor.Collection('markers');
+var MarkersHistory = new Meteor.Collection('markershistory');
 
 var throttledScale = _.throttle(renderScale, 1000, {leading: false});
 var throttledTotal = _.throttle(renderTotal, 1000, {leading: false});
@@ -7,7 +7,8 @@ var map;
 var markersGroup = {
         edenor: L.layerGroup(),
         edesur: L.layerGroup(),
-        cortes: L.layerGroup()
+        cortes: L.layerGroup(),
+        history: L.layerGroup(),
 };
 
 var min, max;
@@ -19,6 +20,7 @@ var RG = new L.ReverseGeoSearch({'accept-language': 'es'});
 
 moment.locale('es');
 Meteor.subscribe('markers');
+Meteor.subscribe('markershistory');
 
 function timestamp(str) {
         return moment(str).unix();
@@ -168,47 +170,51 @@ function renderMap(range) {
                                   iconSize: [amplitude, amplitude]});
         }
 
-        var query = Markers.find(limit);
-        query.observe({
-                added: function(document) {
-                        if (migrate_cut_cortes(document))
-                                return;
+        var query = [Markers.find(limit), MarkersHistory.find(limit)];
+        query.forEach (function (q) {
+                q.observe({
+                        added: function(document) {
+                                if (migrate_cut_cortes(document))
+                                        return;
 
-                        var icon = makeIcon(document);
-                        var marker = L.marker(document.latlng ,
-                                              {icon: icon,
-                                               title: document.amplitude + ' usuarios',
-                                               opacity: 0.8
-                                              }).addTo(markersGroup[document.corp]);
-                        marker.id = document._id;
-                        if (document.date) {
-                                insertCorp(document);
-                        } else {
-                                insertCut(document, marker);
-                        }
+                                var icon = makeIcon(document);
+                                var marker = L.marker(document.latlng ,
+                                                      {icon: icon,
+                                                       title: document.amplitude + ' usuarios',
+                                                       opacity: 0.8
+                                                      }).addTo(markersGroup[document.corp]);
+                                marker.id = document._id;
+                                if (document.corp === 'cortes') {
+                                        insertCorp(document);
+                                } else if (document.corp === 'history') {
+                                        /* do nothing */
+                                } else {
+                                        insertCut(document, marker);
+                                }
 
-                        if (! document.geocode) {
-                                var doc = Markers.findOne(marker.id);
-                                RG.Search (document.latlng, function (data) {
+                                if (! document.geocode) {
                                         var doc = Markers.findOne(marker.id);
-                                        doc.geocode = data.display_name;
-                                        Markers.update(doc._id, doc);
+                                        RG.Search (document.latlng, function (data) {
+                                                var doc = Markers.findOne(marker.id);
+                                                doc.geocode = data.display_name;
+                                                Markers.update(doc._id, doc);
+                                        });
+                                }
+                        },
+                        changed: function (document) {
+                                markerById(markersGroup[document.corp], document._id, function (layer) {
+                                        if (document.corp === 'cortes')
+                                                layer.getPopup().setContent(popupContent(document));
+
+                                        layer.setIcon (makeIcon(document));
+                                });
+                        },
+                        removed: function(oldDocument) {
+                                markerById(markersGroup[oldDocument.corp], oldDocument._id, function (layer) {
+                                        markersGroup[oldDocument.corp].removeLayer (layer);
                                 });
                         }
-                },
-                changed: function (document) {
-                        markerById(markersGroup[document.corp], document._id, function (layer) {
-                                if (!document.date)
-                                        layer.getPopup().setContent(popupContent(document));
-
-                                layer.setIcon (makeIcon(document));
-                        });
-                },
-                removed: function(oldDocument) {
-                        markerById(markersGroup[oldDocument.corp], oldDocument._id, function (layer) {
-                                markersGroup[oldDocument.corp].removeLayer (layer);
-                        });
-                }
+                });
         });
 }
 
