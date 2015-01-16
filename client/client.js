@@ -164,7 +164,7 @@ function renderMap(range) {
                 var amplitude = 2 + document.amplitude/10;
 
                 if (document.state)
-                        className = 'cut-' + document.state;
+                        className = 'cortes-' + document.state;
                 else
                         className = document.corp.toLowerCase();
 
@@ -227,7 +227,7 @@ Template.map.events({
         'input textarea': function (e) {
                 lastValue[e.target.id] = e.target.value;
         },
-        'click .cut-type-select': function (e) {
+        'click .cortes-type-select': function (e) {
                 var id = e.target.parentElement.id;
                 var state = e.target.id;
 

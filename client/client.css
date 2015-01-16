@@ -73,7 +73,7 @@
     }
 }
 
-.map-icon-cut-active:before {
+.map-icon-cortes-active:before {
     display: block;
     position: relative;
     content: " ";
@@ -90,7 +90,7 @@
     animation-timing-function: ease-in-out;
 }
 
-icon-cut, .map-icon-cut-active, .map-icon-cut-projected {
+.map-icon-cortes, .map-icon-cortes-active, .map-icon-cortes-projected {
     width: 16px;
     height: 16px;
     left: -8px;
@@ -98,17 +98,17 @@ icon-cut, .map-icon-cut-active, .map-icon-cut-projected {
     border-radius: 0px!important;
 }
 
-.map-icon-cut {
+.map-icon-cortes {
     border-color: green;
     background-color: green;
 }
 
-.map-icon-cut-active {
+.map-icon-cortes-active {
     border-color: #ff0022;
     background-color: #ff2222;
 }
 
-.map-icon-cut-projected {
+.map-icon-cortes-projected {
     border-color: #ff7722;
     background-color: #ff7722
 }
