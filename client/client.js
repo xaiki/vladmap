@@ -3,6 +3,7 @@ var MarkersHistory = new Meteor.Collection('markershistory');
 
 var throttledScale = _.throttle(renderScale, 1000, {leading: false});
 var throttledTotal = _.throttle(renderTotal, 1000, {leading: false});
+
 var map;
 var markersGroup = {
         edenor: L.layerGroup(),
@@ -24,6 +25,8 @@ var heatmapLayer = new HeatmapOverlay({
         useLocalExtrema: false,
         valueField: 'value'
 });
+
+var toolong = 60*60;
 
 moment.locale('es');
 Meteor.subscribe('markers');
@@ -227,14 +230,16 @@ function renderMap(range) {
         function markerToHeat(item) {
                 var t = moment.unix(item.removed);
                 var now = moment();
-                var diff = t.diff (now, 'minutes');
-                var toolong = 60;
+                var diff = t.diff (now, 'seconds');
+                var value = 100*((toolong + diff)/toolong);
 
-                console.log ('diff', 100*toolong/(toolong - diff), diff);
+                if (toolong + diff <  0)
+                        value = 0;
+
                 return {
                         lat: item.latlng.lat,
                         lng: item.latlng.lng,
-                        value: 100*toolong/(toolong - diff)
+                        value: value
                 };
         }
 
@@ -246,11 +251,15 @@ function renderMap(range) {
                 heatmapLayer.setData(data);
         }
 
+        var throttledRefreshHeat = _.throttle(refreshHeat, 100, {leading: false});
+
+        limit = { removed: { $gt: moment().unix() - toolong}};
+        console.log (limit);
         query = MarkersHistory.find(limit);
         query.observe({
-                added: function (doc) { return refreshHeat(query)},
-                changed: function (doc) { return refreshHeat(query)},
-                removed: function (doc) { return refreshHeat(query)}
+                added: function (doc) { return throttledRefreshHeat(query)},
+                changed: function (doc) { return throttledRefreshHeat(query)},
+                removed: function (doc) { return throttledRefreshHeat(query)}
         });
 }
 
