@@ -95,8 +95,6 @@ function renderMap(range) {
                 ]};
         };
 
-        var query = Markers.find(limit);
-
         function insertCorp (document) {
                 var modified = false;
                 if (!min || min > document.date) {
@@ -134,7 +132,6 @@ function renderMap(range) {
                 marker.on('dblclick', function(event) {
                         var doc = Markers.findOne(event.target.id);
                         Markers.remove(doc._id);
-                        log ('Corte removed: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                 });
                 marker.bindPopup(popupContent(document));
 
@@ -152,7 +149,6 @@ function renderMap(range) {
                                 doc.state = 'active';
 
                         Markers.update(marker.id, doc);
-                        log ('Corte update: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ', data: ' + doc.text);
                 });
                 if (! document.text) {
                         marker.openPopup();
@@ -172,6 +168,7 @@ function renderMap(range) {
                                   iconSize: [amplitude, amplitude]});
         }
 
+        var query = Markers.find(limit);
         query.observe({
                 added: function(document) {
                         if (migrate_cut_cortes(document))
@@ -233,8 +230,7 @@ Template.map.events({
 
                 var doc = Markers.findOne(id);
                 doc.state = state;
-
-                log ('Corte cambio de estado: ' + doc.latlng.lat + ', ' + doc.latlng.lng + ' -> ' + state);
+                
                 Markers.update(id, doc);
         },
         'click .close-marker': function (e) {
@@ -253,9 +249,7 @@ Template.map.rendered = function() {
 
   L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
         map.on('dblclick', function(event) {
-                console.log (event.latlng);
                 Markers.insert({corp: 'cortes', latlng: event.latlng});
-                log ('Corte creado: ' + event.latlng.lat + ', ' + event.latlng.lng);
         });
 
         new L.Control.GeoSearch({

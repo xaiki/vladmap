@@ -1,16 +1,20 @@
 var Errors = new Meteor.Collection (null);
 var Logs   = new Meteor.Collection ('enrelogs');
+var CutLogs= new Meteor.Collection ('cutlogs');
 
 Meteor.subscribe('enrelogs');
+Meteor.subscribe('cutlogs');
 
 function getCollections() {
         return Errors.find().fetch().concat(Logs.find().fetch());
 }
 
+/*
 setInterval(function() {
         var id = Logs.insert({_id: 'noshow'});
         Logs.remove(id);
 }, 1000);
+*/
 
 Template.errors.helpers({
         errors: function() {
@@ -23,10 +27,11 @@ Template.errors.events({
                 var id = e.target.parentElement.id;
                 var type = e.target.parentElement.className;
 
-                if (type === 'log')
+                if (type === 'log') {
                         Logs.remove(id);
-                else
+                } else {
                         Errors.remove(id);
+                }
         }
 });
 
