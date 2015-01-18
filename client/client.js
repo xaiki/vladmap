@@ -261,6 +261,10 @@ function renderMap(range) {
                 changed: function (doc) { return throttledRefreshHeat(query)},
                 removed: function (doc) { return throttledRefreshHeat(query)}
         });
+
+        Meteor.setInterval(function () {
+                return throttledRefreshHeat(query);
+        }, 10);
 }
 
 function markerById(group, id, fn) {
