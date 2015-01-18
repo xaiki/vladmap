@@ -142,8 +142,7 @@ function renderMap(range) {
 
         function insertCut (document, marker) {
                 marker.on('dblclick', function(event) {
-                        var doc = Markers.findOne(event.target.id);
-                        Markers.remove(doc._id);
+                        Markers.remove(event.target.id);
                 });
                 marker.bindPopup(popupContent(document));
 
