@@ -2,19 +2,17 @@ var Errors = new Meteor.Collection (null);
 var Logs   = new Meteor.Collection ('enrelogs');
 var CutLogs= new Meteor.Collection ('cutlogs');
 
+var TickDep = new Deps.Dependency;
+var TickInt = Meteor.setInterval(function() {
+        TickDep.changed();
+}, 1000);
+
 Meteor.subscribe('enrelogs');
 Meteor.subscribe('cutlogs');
 
 function getCollections() {
         return Errors.find().fetch().concat(Logs.find().fetch());
 }
-
-/*
-setInterval(function() {
-        var id = Logs.insert({_id: 'noshow'});
-        Logs.remove(id);
-}, 1000);
-*/
 
 Template.errors.helpers({
         errors: function() {
@@ -37,6 +35,7 @@ Template.errors.events({
 
 Template.error.helpers({
         prettyDate: function (date) {
+                TickDep.depend();
                 return moment.unix(date).fromNow();
         }
 });
