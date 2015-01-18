@@ -257,7 +257,7 @@ function renderMap(range) {
         console.log (limit);
         query = MarkersHistory.find(limit);
         query.observe({
-                added: function (doc) { return throttledRefreshHeat(query)},
+                added:   function (doc) { return throttledRefreshHeat(query)},
                 changed: function (doc) { return throttledRefreshHeat(query)},
                 removed: function (doc) { return throttledRefreshHeat(query)}
         });
