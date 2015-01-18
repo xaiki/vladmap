@@ -154,7 +154,8 @@ function renderMap(range) {
                 popup.on('close', function (e) {
                         if (! lastValue[marker.id])
                                 return;
-                        var doc = Markers.findOne(marker.id);
+                        var doc = Markers.findOne(marker.id) || document;
+
                         doc.text = lastValue[marker.id];
                         if (! doc.state)
                                 doc.state = 'active';
