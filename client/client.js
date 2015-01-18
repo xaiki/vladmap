@@ -264,7 +264,7 @@ function renderMap(range) {
 
         Meteor.setInterval(function () {
                 return throttledRefreshHeat(query);
-        }, 10);
+        }, toolong/10); /* refresh every 1/100th $toolong */
 }
 
 function markerById(group, id, fn) {
